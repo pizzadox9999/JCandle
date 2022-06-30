@@ -12,6 +12,8 @@ import org.jsfml.graphics.Transform;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.IntRect;
+import org.jsfml.graphics.ConstTexture;
+import org.jsfml.graphics.ConstShader;
 
 public abstract class JSFMLUtil{
   public static Vertex Vertex_copyWithNewColor(Vertex v, Color color){
@@ -35,9 +37,17 @@ public abstract class JSFMLUtil{
   }
   public static void VertexArray_setIndexNewVertexPosition(VertexArray va, int index, Vector2f position){
     Vertex v=va.get(index);
-
+    
     v=Vertex_copyWithNewPosition(v, position);
     va.set(index, v);
+  }
+  public static void VertexArray_fill(VertexArray va, int amount){
+    VertexArray_fill(va, 0, amount);
+  }
+  public static void VertexArray_fill(VertexArray va, int from, int to){
+    for (int i=from; i<to; i++) {
+      va.add(new Vertex(Vector2f.ZERO));
+    } 
   }
   //RenderStates(BlendMode blendMode, Transform transform, ConstTexture texture, ConstShader shader) 
   public static RenderStates RenderStates_copyWithNewBlendMode(RenderStates rs, BlendMode blendMode){
@@ -51,6 +61,17 @@ public abstract class JSFMLUtil{
   }
   public static RenderStates RenderStates_copyWithNewShader(RenderStates rs, Shader shader){
     return new RenderStates(rs.blendMode, rs.transform, rs.texture, shader);
+  }
+  public static RenderStates RenderStates_copyWith(RenderStates rs, BlendMode blendMode, Transform transform, ConstTexture texture, ConstShader shader){
+    if(blendMode==null)
+      blendMode=rs.blendMode;
+    if(transform==null)
+      transform=rs.transform;
+    if(texture==null)
+      texture=rs.texture;
+    if(shader==null)
+      shader=rs.shader;
+    return new RenderStates(blendMode, transform, texture, shader);
   }
   //Color(int r, int g, int b, int a) 
   public static Color Color_copyWithNewRed(Color c, int r){
