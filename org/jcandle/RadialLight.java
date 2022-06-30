@@ -87,8 +87,9 @@ public class RadialLight extends LightSource{
     l_lightTexturePlain.display();
     l_lightTexturePlain.setSmooth(true);
   }
-  float module360(float x){
-    x = (float)CandleUtil.fmod(x,360.f);
+  
+  public float module360(float x){
+    x=x%360;
     if(x < 0.f) x += 360.f;
     return x;
   }
@@ -159,10 +160,13 @@ public class RadialLight extends LightSource{
     if(s.blendMode == BlendMode.ALPHA){
       s=JSFMLUtil.RenderStates_copyWithNewBlendMode(s, BlendMode.ADD);
     }
-    
+    for (int i=0; i<m_polygon.size(); i++) {
+      JSFMLUtil.VertexArray_setIndexNewVertexColor(m_polygon, i, Color.MAGENTA);
+    } 
     t.draw(m_polygon, s);
     
     if(CandleUtil.JCANDLE_DEBUG){
+      
       RenderStates deb_s=new RenderStates(s.transform);
       t.draw(m_debug, deb_s);
     } 
@@ -190,9 +194,9 @@ public class RadialLight extends LightSource{
     ArrayList<Line> rays=new ArrayList<Line>(2 + lines.size() * 2 * 3);// 2: beam angle, 4: corners, 2: pnts/sgmnt, 3 rays/pnt
     
     // Start casting
-    float bl1 = module360(getRotation() - m_beamAngle/2);
-    float bl2 = module360(getRotation() + m_beamAngle/2);
-    boolean beamAngleBigEnough = m_beamAngle < 0.1f;
+    float bl1 = module360(getRotation() - getBeamAngle()/2);
+    float bl2 = module360(getRotation() + getBeamAngle()/2);
+    boolean beamAngleBigEnough = getBeamAngle() < 0.1f;
     Vector2f castPoint = getPosition();
     float off = .001f;
     
@@ -288,7 +292,7 @@ public class RadialLight extends LightSource{
       JSFMLUtil.VertexArray_setIndexNewVertexPosition(m_debug, d_n-2, tr_i.transformPoint(Vector2f.add(castPoint, Vector2f.mul(al1, m_range))));
       JSFMLUtil.VertexArray_setIndexNewVertexPosition(m_debug, d_n-4, tr_i.transformPoint(Vector2f.add(castPoint, Vector2f.mul(al2, m_range))));
     }
-    for(int i=0; i < points.size()-1; i++){
+    for(int i=0; i < points.size(); i++){
       Vector2f p = points.get(i);
       JSFMLUtil.VertexArray_setIndexNewVertexPosition(m_polygon, i+1, p);
       JSFMLUtil.VertexArray_setIndexNewVertexTexCoords(m_polygon, i+1, p);
@@ -323,6 +327,10 @@ public class RadialLight extends LightSource{
       * @see setBeamAngle
       */
   public float getBeamAngle() {
+    if(m_beamAngle!=0){
+      System.out.println(m_beamAngle);  
+      System.exit(0);
+    }
     return m_beamAngle;
   }
       
